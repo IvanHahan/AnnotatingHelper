@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Nandos.iml" filepath="$PROJECT_DIR$/.idea/Nandos.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../ActionRecognitionAnnotator/.idea/ActionRecognitionAnnotator.iml" filepath="$PROJECT_DIR$/../ActionRecognitionAnnotator/.idea/ActionRecognitionAnnotator.iml" />
     </modules>
   </component>
 </project>
