@@ -5,16 +5,11 @@ import os
 import numpy as np
 from tqdm import tqdm
 
+from utils import parse_annotation
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_dir', default=os.path.join('/Users/UnicornKing/20180101_120040_annot'))
 args = parser.parse_args()
-
-
-def parse_annotation(path):
-    with open(path, 'r') as f:
-        annotation = json.loads(f.read())
-        return annotation
-
 
 if __name__ == '__main__':
     annotations = [(file, parse_annotation(os.path.join(args.data_dir, file))) for file in
