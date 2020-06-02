@@ -47,7 +47,7 @@ if __name__ == '__main__':
     unique_labels = np.unique(records[:, 2])
     label_to_idx = {l: i for i, l in enumerate(unique_labels)}
 
-    # records = [(path, idx, label_to_idx[label]) for (path, idx, label) in records]
+    records = [(path, idx, label_to_idx[label]) for (path, idx, label) in records]
     records = [f'{path}, {idx}, {label}' for (path, idx, label) in records]
 
     with open(args.output_label_path, 'w') as f:
