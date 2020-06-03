@@ -7,6 +7,7 @@ import cv2
 import re
 import numpy as np
 from tqdm import tqdm
+from definitions import action_to_idx, idx_to_action
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_dir', default='/Users/UnicornKing/20180101_120040')
@@ -20,35 +21,42 @@ if __name__ == '__main__':
                    if os.path.splitext(file)[-1] == '.json']
     label_counts = {}
     records = []
+    dirs = set()
     for file, annot in tqdm(annotations):
         file_name = os.path.splitext(file)[0]
         for i, shape in enumerate(annot['shapes']):
             x1, y1 = shape['points'][0]
             x2, y2 = shape['points'][1]
+            label = shape['label']
+            if re.sub(r'_\d+', '', label) not in action_to_idx:
+                continue
 
             frame = cv2.imread(os.path.join(args.data_dir, file_name + '.jpg'))[y1:y2, x1:x2]
-            frame_path = os.path.join(args.output_image_dir, file_name + f'_{i}.jpg')
-            cv2.imwrite(frame_path, frame)
+            frame_dir = os.path.join(args.output_image_dir, label)
+            make_dir_if_needed(frame_dir)
 
             frame_index = label_counts.get(shape['label'], -1) + 1
             label_counts[shape['label']] = frame_index
 
-            label = shape['label']
+            frame_path = os.path.join(frame_dir, '{:8d}.jpg'.format(frame_index))
+            cv2.imwrite(frame_path, frame)
 
-            records.append((frame_path, frame_index, label))
-
-    records = np.array(records)
-    keep_labels, counts = np.unique(records[:, 2], return_counts=True)
-    keep_labels = keep_labels[counts > 1]
-    # print(np.apply_along_axis(lambda x: x in keep_labels, 0, records[:, 2]).shape)
-    records = records[[True if label in keep_labels else False for label in records[:, 2]]]
-    records = np.array([(path, idx, re.sub(r'_\d+', '', label)) for (path, idx, label) in records])
-
-    unique_labels = np.unique(records[:, 2])
-    label_to_idx = {l: i for i, l in enumerate(unique_labels)}
-
-    records = [(path, idx, label_to_idx[label]) for (path, idx, label) in records]
-    records = [f'{path}, {idx}, {label}' for (path, idx, label) in records]
+            dirs.add(label)
+            # records.append((frame_dir, frame_index, label))
 
     with open(args.output_label_path, 'w') as f:
-        f.write('\n'.join(records))
+        for dir in dirs:
+            frame_number = len([x for x in os.listdir(os.path.join(args.output_image_dir, dir))
+                            if os.path.splitext(x)[1] == '.jpg'])
+            label = re.sub(r'_\d+', '', dir)
+            f.write(f'{dir} {frame_number} {action_to_idx[label]}\n')
+    # records = np.array(records)
+    # records = np.array([(path, idx, re.sub(r'_\d+', '', label)) for (path, idx, label) in records])
+    # records = records[[True if label in action_to_idx else False for label in records[:, 2]]]
+    #
+    #
+    # records = [(path, idx, action_to_idx[label]) for (path, idx, label) in records]
+    # records = [f'{path}, {idx}, {label}' for (path, idx, label) in records]
+
+    # with open(args.output_label_path, 'w') as f:
+    #     f.write('\n'.join(records))
