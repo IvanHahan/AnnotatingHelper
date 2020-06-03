@@ -38,7 +38,7 @@ if __name__ == '__main__':
             frame_index = label_counts.get(shape['label'], -1) + 1
             label_counts[shape['label']] = frame_index
 
-            frame_path = os.path.join(frame_dir, '{:8d}.jpg'.format(frame_index))
+            frame_path = os.path.join(frame_dir, '{:08d}.jpg'.format(frame_index))
             cv2.imwrite(frame_path, frame)
 
             dirs.add(label)
