@@ -4,6 +4,7 @@ import os
 
 import numpy as np
 from tqdm import tqdm
+import re
 
 from utils import parse_annotation
 
@@ -20,6 +21,8 @@ if __name__ == '__main__':
         prev_labels = set([shape['label'] for shape in prev_annot['shapes']])
         labels = set([shape['label'] for shape in annot['shapes']])
         for label in prev_labels.intersection(labels):
+            if re.search(r'_\d+', label) is None:
+                continue
             prev_points = [shape['points'] for shape in prev_annot['shapes'] if shape['label'] == label][0]
             points = [shape['points'] for shape in annot['shapes'] if shape['label'] == label][0]
 

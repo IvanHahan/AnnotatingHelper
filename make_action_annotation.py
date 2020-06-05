@@ -35,14 +35,13 @@ if __name__ == '__main__':
             frame_dir = os.path.join(args.output_image_dir, label)
             make_dir_if_needed(frame_dir)
 
-            frame_index = label_counts.get(shape['label'], -1) + 1
+            frame_index = label_counts.get(shape['label'], 0) + 1
             label_counts[shape['label']] = frame_index
 
             frame_path = os.path.join(frame_dir, '{:08d}.jpg'.format(frame_index))
             cv2.imwrite(frame_path, frame)
 
             dirs.add(label)
-            # records.append((frame_dir, frame_index, label))
 
     with open(args.output_label_path, 'w') as f:
         for dir in dirs:
@@ -50,13 +49,3 @@ if __name__ == '__main__':
                             if os.path.splitext(x)[1] == '.jpg'])
             label = re.sub(r'_\d+', '', dir)
             f.write(f'{dir} {frame_number} {action_to_idx[label]}\n')
-    # records = np.array(records)
-    # records = np.array([(path, idx, re.sub(r'_\d+', '', label)) for (path, idx, label) in records])
-    # records = records[[True if label in action_to_idx else False for label in records[:, 2]]]
-    #
-    #
-    # records = [(path, idx, action_to_idx[label]) for (path, idx, label) in records]
-    # records = [f'{path}, {idx}, {label}' for (path, idx, label) in records]
-
-    # with open(args.output_label_path, 'w') as f:
-    #     f.write('\n'.join(records))
