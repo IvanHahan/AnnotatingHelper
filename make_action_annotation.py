@@ -11,8 +11,8 @@ from definitions import action_to_idx, idx_to_action
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_dir', default='/Users/UnicornKing/20180101_120040')
-parser.add_argument('--output_image_dir', default='data/images')
-parser.add_argument('--output_label_path', default='data/label.txt')
+parser.add_argument('--output_image_dir', default='data/actions')
+parser.add_argument('--output_label_path', default='data/actions.txt')
 args = parser.parse_args()
 
 if __name__ == '__main__':

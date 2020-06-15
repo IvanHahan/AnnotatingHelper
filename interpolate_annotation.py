@@ -9,7 +9,7 @@ import re
 from utils import parse_annotation
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--data_dir', default=os.path.join('/Users/UnicornKing/20180101_120040_annot'))
+parser.add_argument('--data_dir', default=os.path.join('/Users/UnicornKing/20180101_120040'))
 args = parser.parse_args()
 
 if __name__ == '__main__':
