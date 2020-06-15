@@ -13,6 +13,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--data_dir', default='/Users/UnicornKing/20180101_120040')
 parser.add_argument('--output_image_dir', default='data/actions')
 parser.add_argument('--output_label_path', default='data/actions.txt')
+parser.add_argument('--split_length', type=int, default=60)
 args = parser.parse_args()
 
 if __name__ == '__main__':
@@ -20,6 +21,7 @@ if __name__ == '__main__':
                    sorted(os.listdir(args.data_dir))
                    if os.path.splitext(file)[-1] == '.json']
     label_counts = {}
+    splits_counts = {}
     records = []
     dirs = set()
     for file, annot in tqdm(annotations):
@@ -31,17 +33,22 @@ if __name__ == '__main__':
             if re.sub(r'_\d+', '', label) not in action_to_idx:
                 continue
 
+            splits_counts.setdefault(label, 0)
+
             frame = cv2.imread(os.path.join(args.data_dir, file_name + '.jpg'))[y1:y2, x1:x2]
-            frame_dir = os.path.join(args.output_image_dir, label)
+            dir_name = label + f'_{splits_counts.get(label, 0)}'
+            frame_dir = os.path.join(args.output_image_dir, dir_name)
             make_dir_if_needed(frame_dir)
 
-            frame_index = label_counts.get(shape['label'], 0) + 1
-            label_counts[shape['label']] = frame_index
+            frame_index = label_counts.get(dir_name, 0) + 1
+            if frame_index > args.split_length:
+                splits_counts[label] += 1
+            label_counts[dir_name] = frame_index
 
             frame_path = os.path.join(frame_dir, '{:08d}.jpg'.format(frame_index))
             cv2.imwrite(frame_path, frame)
 
-            dirs.add(label)
+            dirs.add(dir_name)
 
     with open(args.output_label_path, 'w') as f:
         for dir in dirs:
